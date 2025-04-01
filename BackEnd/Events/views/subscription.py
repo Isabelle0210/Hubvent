@@ -30,10 +30,10 @@ class SubscriptionToEventView(APIView):
           subscription = EventSubscription.objects.create(event=event, user=request.user)
           subscription.save()
           
-          serializer = EventSubscriptionSerializer(subscription) # Aqui você deve usar o serializer correto para a inscrição
+          serializer = EventSubscriptionSerializer(subscription)
           
           
-          # Aqui você pode gerar o QR code com os dados da inscrição
+          # Aqui gera o QR code com os dados da inscrição
           qr_data = f"Inscrição ID: {subscription.id} - Evento: {event.title} - Usuário: {request.user.username}"
           qr = qrcode.make (qr_data)
           

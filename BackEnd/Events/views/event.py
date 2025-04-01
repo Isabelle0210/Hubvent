@@ -4,46 +4,41 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from BackEnd import Events
+from Events.models import Event
 from Events.serializer import EventSerializer
 
 
 class EventView(APIView):
      permission_classes = [IsAuthenticated]
-     def post (self, request) -> None:
+     def post(self, request):
           title = request.data.get("title")
           description = request.data.get("description")
-          date = request.data.get("date")
-          created_by = request.user.id # AQUI PEGA O ID DO USUARIO LOGADO QUE ESTA CRIANDO O EVENTO
-          created_at = request.data.get("created_at") #DATA QUE O EVENTO FOI CRIADO
-          
-          if not title or not description or not date:
-               return Response({"error": "Dados insuficientes"}, status=400)
-          
-          # Aqui você deve adicionar a lógica para criar o evento no banco de dados
-          
-          event = Events.objects.create(
-               title=title,
-               description=description,
-               created_by=created_by,
-               created_at=created_at
-          )
-          event.save()
-          
-          serializer = EventSerializer(event) # Aqui você deve usar o serializer correto para o evento
-          
-          return Response({'event':serializer.data}, status=201)
+
+          if not title or not description:
+               return Response({"error": "Dados insuficientes"}, status=status.HTTP_400_BAD_REQUEST)
+
+          try:
+               event = Event.objects.create(
+                    title=title,
+                    description=description,
+                    created_by=request.user,  # Passando o usuário inteiro, não só o ID
+                    created_at=now()  # Usa o timestamp atual
+               )
+               serializer = EventSerializer(event)
+               return Response(serializer.data, status=status.HTTP_201_CREATED)
+          except Exception as e:
+               return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
      
      def get(self, request):
-          events = Events.objects.all()
+          events = Event.objects.all()
           serializer = EventSerializer(events, many=True)
           
           return Response({'events': serializer.data}, status=200)
      
      def put(self, request, event_id):
           try:
-               event = Events.objects.get(id=event_id)
-          except Events.DoesNotExist:
+               event = Event.objects.get(id=event_id)
+          except Event.DoesNotExist:
                return Response({"error": "Evento não encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
           # Garantir que o usuário autenticado seja o criador do evento

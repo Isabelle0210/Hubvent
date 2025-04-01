@@ -4,10 +4,9 @@ from Users.models import User
 
 class EventSerializer(serializers.ModelSerializer):
      created_by = serializers.ReadOnlyField(source=User.nome)
-    
      class Meta:
           model = Event
-          fields = '__all__'
+          fields = ['title', 'description', 'created_by', 'created_at']
           
 class EventSubscriptionSerializer(serializers.ModelSerializer):
      user = serializers.ReadOnlyField(source=User.nome)
