@@ -1,10 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from BackEnd import Events
+from Events.models import Event, EventSubscription
 from Events.serializer import EventSubscriptionSerializer
-from Events.models import EventSubscription
 from rest_framework import status
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 import qrcode
 import io
@@ -13,11 +14,28 @@ import base64
 class SubscriptionToEventView(APIView):
      authentication_classes = [IsAuthenticated]
 
+     @swagger_auto_schema(
+          operation_summary="Inscrição em Evento",
+          manual_parameters=[
+               openapi.Parameter(
+                    'event_id',
+                    openapi.IN_PATH,
+                    description="ID do evento",
+                    type=openapi.TYPE_INTEGER
+               )
+          ],
+          responses={
+               201: "Inscrição criada com sucesso",
+               400: "Erro ao criar inscrição",
+               404: "Evento não encontrado"
+          }
+     )
+
      def post (self,request, event_id):
           # caso o evento não exista, retorna um erro 404
           try :
-               event = Events.objects.get(id=event_id)
-          except Events.DoesNotExist:
+               event = Event.objects.get(id=event_id)
+          except Event.DoesNotExist:
                return Response({"error": "Evento não encontrado"}, status=404)
           
           # caso voce tente se inscrever em um evento que ja esta inscrito, retorna um erro 400
@@ -45,22 +63,50 @@ class SubscriptionToEventView(APIView):
                'subscription': serializer.data,
                'qr_code': qr.base64
           }, status=201)
-          
+class ListSubscriptionView(APIView):
+     permission_classes = [IsAuthenticated]
+     
+     @swagger_auto_schema(
+          operation_summary="Listar Inscrições do Usuário",
+          responses={
+               200: "Lista de inscrições retornada com sucesso",
+               404: "Usuário não encontrado"
+          }
+     )
      def get(self, request, event_id):
           try :
-               event = Events.objects.get(id=event_id)
-          except Events.DoesNotExist:
+               event = Event.objects.get(id=event_id)
+          except Event.DoesNotExist:
                return Response({"error": "Evento não encontrado"}, status=404)
           
           # Aqui você pode filtrar as inscrições do evento
           subscriptions = EventSubscription.objects.filter(event=event)
           serializer = EventSubscriptionSerializer(subscriptions, many=True)
           return Response({'subscriptions': serializer.data}, status=200)
+
+class DeleteSubscriptionView(APIView):
+     permission_classes = [IsAuthenticated]
+     
+     @swagger_auto_schema(
+          operation_summary="Cancelar Inscrição em Evento",
+          manual_parameters=[
+               openapi.Parameter(
+                    'event_id',
+                    openapi.IN_PATH,
+                    description="ID do evento",
+                    type=openapi.TYPE_INTEGER
+               )
+          ],
+          responses={
+               204: "Inscrição cancelada com sucesso",
+               404: "Inscrição não encontrada"
+          }
+     )
      
      def delete (self, request, event_id):
           try:
-               event = Events.objects.get(id=event_id)
-          except Events.DoesNotExist:
+               event = Event.objects.get(id=event_id)
+          except Event.DoesNotExist:
                return Response({"error": "Evento não encontrado"}, status=404)
           
           # Verifica se a inscrição existe
