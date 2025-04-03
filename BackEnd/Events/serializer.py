@@ -2,11 +2,17 @@ from rest_framework import serializers
 from .models import Event, EventSubscription
 from Users.models import User
 
+from rest_framework import serializers
+from Events.models import Event
+
 class EventSerializer(serializers.ModelSerializer):
-     created_by = serializers.ReadOnlyField(source=User.nome)
+     created_by = serializers.ReadOnlyField(source='created_by.username')
+     date = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', required=True)
+
      class Meta:
           model = Event
-          fields = ['title', 'description', 'created_by', 'created_at']
+          fields = ['title', 'description', 'date', 'created_by', 'created_at']
+
           
 class EventSubscriptionSerializer(serializers.ModelSerializer):
      user = serializers.ReadOnlyField(source=User.nome)
