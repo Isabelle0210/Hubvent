@@ -12,7 +12,7 @@ import io
 import base64
 
 class SubscriptionToEventView(APIView):
-     authentication_classes = [IsAuthenticated]
+     permission_classes = [IsAuthenticated]
 
      @swagger_auto_schema(
           operation_summary="Inscrição em Evento",
@@ -52,7 +52,7 @@ class SubscriptionToEventView(APIView):
           
           
           # Aqui gera o QR code com os dados da inscrição
-          qr_data = f"Inscrição ID: {subscription.id} - Evento: {event.title} - Usuário: {request.user.username}"
+          qr_data = f"Inscrição ID: {subscription.id} - Evento: {event.title} - Usuário: {request.user.nome}"
           qr = qrcode.make (qr_data)
           
           buffer = io.BytesIO()

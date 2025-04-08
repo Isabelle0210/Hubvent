@@ -9,6 +9,8 @@ from drf_yasg import openapi
 from django.utils.timezone import now
 from django.utils.timezone import now, make_aware
 from dateutil.parser import parse, ParserError
+import datetime
+
 
 
 class EventView(APIView):
@@ -73,7 +75,7 @@ class ListEventView(APIView):
           }
      )
      def get(self, request):
-          events = Event.objects.all()
+          events = Event.objects.filter(date__isnull=False)  # Ignora os sem data
           serializer = EventSerializer(events, many=True)
           return Response({'events': serializer.data}, status=status.HTTP_200_OK)
 

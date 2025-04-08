@@ -7,9 +7,10 @@ from Users.models import User
 class Event(models.Model): # modelo de como um evento deve ser e como ele deve ser salvo no banco de dados
      title = models.CharField(max_length=100)
      description = models.TextField()
-     date = models.DateTimeField()
+     date = models.DateField(null=False, blank=False) #alterei aqui para não aceitar nulo e vazio 
      created_at = models.DateTimeField(auto_now_add=True) 
      created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+     
      
      def __str__(self):
           return self.title
