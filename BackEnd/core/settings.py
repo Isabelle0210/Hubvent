@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'Events',
     
 ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = 'Users.User'
 

@@ -26,3 +26,6 @@ export type UpdateEventRequest = { // esse é o que eu envio para a api
 
 
 
+
+
+
