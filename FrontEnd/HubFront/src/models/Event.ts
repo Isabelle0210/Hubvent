@@ -5,12 +5,12 @@ export type Event = { // esse é o que eu envio para a api
      title: string;
      description: string;
      date: string;
-     created_at: string;
-     created_by: User; //quem criou o evento
+     created_at?: string;
+     created_by?: User; //quem criou o evento
 }
 
 export type ApiGetEvent = { // esse é o que eu recebo da api
-     event: Event[];
+     events: Event[];
 }
 
 export type CreateEventRequest = { // esse é o que eu envio para a api

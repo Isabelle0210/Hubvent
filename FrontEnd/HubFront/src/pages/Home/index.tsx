@@ -2,6 +2,9 @@ import { Button, Drawer } from "@mui/material"
 import { Helmet } from "react-helmet"
 import { Nav } from "./nav"
 import { useState } from "react"
+import { Feed } from "./Feed"
+import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
+
 export const Home = () => {
      const [open, setOpen] = useState(false)
      
@@ -18,15 +21,20 @@ export const Home = () => {
 
           <>
           <Helmet>Home</Helmet>
-          <div className="bg-[#3C3D37] h-screen w-screen">
-               <header className="w-screen h-[8rem] flex justify-between text-[2rem] bg-[#8C3061] p-[1rem]">
-                    <Button onClick={handleToggleDrawer(true)} ><h1 className="text-[#000]">Menu</h1></Button>
+          <div className="bg-[#F6F8D5] h-full w-screen">
+               <header className="w-screen h-[4rem] flex justify-between text-4xl bg-[#98D2C0] ">
+                    <Button onClick={handleToggleDrawer(true)} >
+                         <AddToPhotosIcon fontSize="large" className="bg-black"/>
+                    </Button>
                     <Drawer open={open} onClose={handleToggleDrawer(false)}>
                          {drawerList}
                     </Drawer>
-                    <h1>Hubvent</h1>
+                    <h1 className="mt-2">Hubvent</h1>
                     <div></div>
                </header>
+               <section className="flex flex-col items-center justify-center list-style-none">
+                    <Feed />
+               </section>
           </div>
           </>
      )
