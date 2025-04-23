@@ -35,6 +35,9 @@ export const Home = () => {
                <section className="flex flex-col items-center justify-center list-style-none">
                     <Feed />
                </section>
+               <footer className="w-screen h-20 bg-[#98D2C0] flex justify-center items-center mt-4">
+                    <p className="text-2xl">Direitos Reservados</p>
+               </footer>
           </div>
           </>
      )
