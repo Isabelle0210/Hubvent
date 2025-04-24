@@ -8,13 +8,10 @@ class EventSerializer(serializers.ModelSerializer):
           model = Event
           fields = '__all__'
 
-     def to_representation(self, instance):
-          rep = super().to_representation(instance)
-          if rep.get('date') is None:
-               rep['date'] = ''  # ou qualquer valor default, como 'Data indefinida'
-          return rep
-
-
+     def validate_date(self, value):
+          if isinstance(value, datetime):
+               return value.date()  # converte datetime para date
+          return value
 
 class EventSubscriptionSerializer(serializers.ModelSerializer):
      user = serializers.ReadOnlyField(source='user.nome')  # corrigido
